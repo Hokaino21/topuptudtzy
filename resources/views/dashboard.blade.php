@@ -325,10 +325,11 @@
                         </h3>
                         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             @php
+                            // Add numeric `price_raw` so client-side can immediately charge balance without opening modal
                             $packages = [
-                                ['title'=>'ML Diamond 86','price'=>'Rp 20.000','game'=>'Mobile Legends', 'badge'=>'Terlaris', 'discount'=>''],
-                                ['title'=>'FF Diamond 120','price'=>'Rp 25.000','game'=>'Free Fire', 'badge'=>'Hot', 'discount'=>'-15%'],
-                                ['title'=>'PUBG UC 300','price'=>'Rp 50.000','game'=>'PUBG Mobile', 'badge'=>'Promo', 'discount'=>'-10%'],
+                                ['title'=>'ML Diamond 86','price'=>'Rp 20.000','price_raw' => 20000,'game'=>'Mobile Legends', 'badge'=>'Terlaris', 'discount'=>''],
+                                ['title'=>'FF Diamond 120','price'=>'Rp 25.000','price_raw' => 25000,'game'=>'Free Fire', 'badge'=>'Hot', 'discount'=>'-15%'],
+                                ['title'=>'PUBG UC 300','price'=>'Rp 50.000','price_raw' => 50000,'game'=>'PUBG Mobile', 'badge'=>'Promo', 'discount'=>'-10%'],
                             ];
                             @endphp
                             
@@ -360,11 +361,8 @@
                                     </div>
                                     
                                     <div class="flex gap-2">
-                                        <button @click="openPurchaseModal({
-                                            name: '{{ $p['game'] }}',
-                                            title: '{{ $p['title'] }}',
-                                            price: '{{ $p['price'] }}'
-                                        })" class="flex-1 text-center py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-bold shadow-lg hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300">
+                                        <!-- Direct purchase: immediately charge user's balance using package amount -->
+                                        <button @click="handlePurchase({ name: '{{ $p['game'] }}' }, { name: '{{ $p['title'] }}', price: {{ $p['price_raw'] }} }, 'balance')" class="flex-1 text-center py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-bold shadow-lg hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300">
                                             🛒 Beli
                                         </button>
                                         <a href="#" class="px-4 py-2.5 bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-xl text-gray-300 font-semibold hover:bg-slate-700/80 hover:border-purple-500/50 transition-all duration-300">
