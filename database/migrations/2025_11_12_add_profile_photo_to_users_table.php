@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('profile_photo_path')->nullable()->after('email_verified_at');
+            // Use a plain string column so the migration works across different DB engines
+            $table->string('profile_photo_path')->nullable();
         });
     }
 
@@ -22,7 +23,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('profile_photo_path');
+            // Only drop the column if it exists to avoid errors on some DB drivers
+            if (Schema::hasColumn('users', 'profile_photo_path')) {
+                $table->dropColumn('profile_photo_path');
+            }
         });
     }
 };
