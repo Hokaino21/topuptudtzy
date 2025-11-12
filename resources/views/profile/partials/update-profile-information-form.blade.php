@@ -13,9 +13,52 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
+
+        <!-- Profile Photo Upload -->
+        <div x-data="{ photoPreview: '{{ $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : '' }}' }">
+            <x-input-label for="profile_photo" :value="__('Profile Photo')" class="text-black font-extrabold" />
+            
+            <!-- Current Photo Display -->
+            <div class="mt-3 mb-4">
+                <div class="flex items-center gap-4">
+                    <img x-show="photoPreview" 
+                         :src="photoPreview" 
+                         alt="Preview" 
+                         class="w-24 h-24 rounded-lg object-cover border-2 border-gray-300">
+                    <div x-show="!photoPreview" class="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                        <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-600 mb-2">{{ __('Upload a photo (JPEG, PNG, GIF - max 2MB)') }}</p>
+                        <input 
+                            type="file" 
+                            id="profile_photo" 
+                            name="profile_photo" 
+                            accept="image/*"
+                            @change="
+                                if ($event.target.files.length) {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => photoPreview = e.target.result;
+                                    reader.readAsDataURL($event.target.files[0]);
+                                }
+                            "
+                            class="block w-full text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-md file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-50 file:text-blue-700
+                                hover:file:bg-blue-100"
+                        />
+                    </div>
+                </div>
+            </div>
+            <x-input-error class="mt-2" :messages="$errors->get('profile_photo')" />
+        </div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" class="text-black font-extrabold" />

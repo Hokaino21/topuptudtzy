@@ -381,9 +381,9 @@
                     <!-- User Profile Card -->
                     <div class="bg-gradient-to-br from-slate-900/80 to-purple-900/40 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-5 shadow-2xl hover:scale-105 transition-transform duration-300">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-xl font-bold shadow-lg">
-                                {{ substr(Auth::user()->name ?? 'P', 0, 1) }}
-                            </div>
+                            <img src="{{ Auth::user()->profile_photo_url }}" 
+                                 alt="{{ Auth::user()->name }}" 
+                                 class="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-xl font-bold shadow-lg object-cover">
                             <div>
                                 <div class="text-xs text-gray-400 uppercase tracking-wider">Akun</div>
                                 <div class="font-bold text-white">{{ Auth::user()->name ?? 'Player' }}</div>

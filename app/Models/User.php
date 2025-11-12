@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'balance',
+        'profile_photo_path',
     ];
 
     /**
@@ -55,5 +56,17 @@ class User extends Authenticatable
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * Get the user's profile photo URL.
+     */
+    public function getProfilePhotoUrlAttribute(): string
+    {
+        if ($this->profile_photo_path) {
+            return asset('storage/' . $this->profile_photo_path);
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7c3aed&background=1e293b&rounded=true';
     }
 }
