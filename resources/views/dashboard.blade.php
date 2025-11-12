@@ -427,9 +427,9 @@
                         <ul class="space-y-3">
                             @forelse (auth()->user()->transactions()->latest()->take(5)->get() as $trx)
                             <li class="flex items-center justify-between p-3 bg-slate-800/50 rounded-xl border border-slate-700/30 hover:border-{{ $trx->status === 'completed' ? 'green' : ($trx->status === 'pending' ? 'yellow' : 'red') }}-500/30 transition-all duration-300">
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 flex-1">
                                     <div class="w-2 h-2 bg-{{ $trx->status === 'completed' ? 'green' : ($trx->status === 'pending' ? 'yellow' : 'red') }}-400 rounded-full animate-pulse"></div>
-                                    <div>
+                                    <div class="flex-1">
                                         <div class="text-xs text-gray-400">{{ $trx->created_at->format('Y-m-d') }}</div>
                                         <div class="text-sm font-semibold text-white">
                                             @if($trx->type === 'purchase')
@@ -438,10 +438,13 @@
                                                 Top Up Saldo
                                             @endif
                                         </div>
+                                        @if($trx->status === 'failed' && $trx->failure_reason)
+                                            <div class="text-xs text-red-400 mt-1">⚠️ {{ $trx->failure_reason }}</div>
+                                        @endif
                                     </div>
                                 </div>
-                                <span class="text-xs font-bold text-{{ $trx->status === 'completed' ? 'green' : ($trx->status === 'pending' ? 'yellow' : 'red') }}-400 px-2 py-1 bg-{{ $trx->status === 'completed' ? 'green' : ($trx->status === 'pending' ? 'yellow' : 'red') }}-500/10 rounded">
-                                    {{ ucfirst($trx->status) }}
+                                <span class="text-xs font-bold text-{{ $trx->status === 'completed' ? 'green' : ($trx->status === 'pending' ? 'yellow' : 'red') }}-400 px-2 py-1 bg-{{ $trx->status === 'completed' ? 'green' : ($trx->status === 'pending' ? 'yellow' : 'red') }}-500/10 rounded whitespace-nowrap ml-2">
+                                    {{ $trx->status === 'completed' ? '✅ Sukses' : ($trx->status === 'pending' ? '⏳ Pending' : '❌ Gagal') }}
                                 </span>
                             </li>
                             @empty

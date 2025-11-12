@@ -42,15 +42,23 @@
                                     <td class="py-3 px-4 font-bold bg-gradient-to-r from-yellow-300 to-yellow-500 bg-clip-text text-transparent">Rp {{ number_format($trx->amount, 0, ',', '.') }}</td>
                                     <td class="py-3 px-4">
                                         @php
-                                            // Accept both 'completed' and 'success' as successful statuses
                                             $isSuccess = in_array($trx->status, ['completed', 'success']);
                                         @endphp
                                         @if($trx->status === 'pending')
-                                            <span class="px-2 py-1 bg-yellow-500/10 text-yellow-300 rounded-full text-xs">Pending</span>
+                                            <div class="flex flex-col gap-1">
+                                                <span class="px-2 py-1 bg-yellow-500/10 text-yellow-300 rounded-full text-xs inline-block w-fit">⏳ Pending</span>
+                                            </div>
                                         @elseif($isSuccess)
-                                            <span class="px-2 py-1 bg-green-500/10 text-green-300 rounded-full text-xs">Sukses</span>
-                                        @else
-                                            <span class="px-2 py-1 bg-red-500/10 text-red-300 rounded-full text-xs">Gagal</span>
+                                            <div class="flex flex-col gap-1">
+                                                <span class="px-2 py-1 bg-green-500/10 text-green-300 rounded-full text-xs inline-block w-fit">✅ Sukses</span>
+                                            </div>
+                                        @elseif($trx->status === 'failed')
+                                            <div class="flex flex-col gap-1">
+                                                <span class="px-2 py-1 bg-red-500/10 text-red-300 rounded-full text-xs inline-block w-fit">❌ Gagal</span>
+                                                @if($trx->failure_reason)
+                                                    <span class="text-xs text-red-400 italic">{{ $trx->failure_reason }}</span>
+                                                @endif
+                                            </div>
                                         @endif
                                     </td>
                                 </tr>

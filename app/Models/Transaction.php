@@ -23,7 +23,8 @@ class Transaction extends Model
         'amount',
         'status',
         'payment_method',
-        'transaction_code'
+        'transaction_code',
+        'failure_reason'
     ];
 
     /**

@@ -84,11 +84,29 @@ class TransactionController extends Controller
         return DB::transaction(function () use ($validated) {
             $user = auth()->user();
 
+            // Check if balance is sufficient for balance payment method
             if ($validated['payment_method'] === 'balance') {
                 if ($user->balance < $validated['amount']) {
-                    throw ValidationException::withMessages([
-                        'amount' => ['Saldo tidak mencukupi untuk melakukan pembelian ini.']
+                    // Record failed transaction
+                    $failedTransaction = Transaction::create([
+                        'user_id' => $user->id,
+                        'type' => 'purchase',
+                        'game_name' => $validated['game_name'],
+                        'item_name' => $validated['item_name'],
+                        'amount' => $validated['amount'],
+                        'status' => 'failed',
+                        'payment_method' => $validated['payment_method'],
+                        'transaction_code' => 'GP-' . strtoupper(Str::random(8)),
+                        'failure_reason' => 'Saldo tidak mencukupi'
                     ]);
+
+                    return response()->json([
+                        'message' => 'Gagal: Saldo tidak mencukupi untuk melakukan pembelian ini.',
+                        'transaction' => $failedTransaction->load('user'),
+                        'current_balance' => $user->balance,
+                        'required_amount' => $validated['amount'],
+                        'shortage' => $validated['amount'] - $user->balance
+                    ], 422);
                 }
 
                 $user->balance -= $validated['amount'];
